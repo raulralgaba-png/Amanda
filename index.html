@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Per a tu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Homemade+Apple&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --nit: #2a1620;
+    --vi: #4a1f31;
+    --rosa: #e6b8c4;
+    --paper: #f6ecdf;
+    --paper-dark: #e7d9c6;
+    --cera: #b0233a;
+    --cera-dark: #7d1527;
+    --tinta: #3b2230;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    background: radial-gradient(ellipse at 50% 30%, var(--vi) 0%, var(--nit) 70%);
+    color: var(--paper);
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ---------- fons: cors que pugen ---------- */
+  .cel { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+  .cel span {
+    position: absolute; bottom: -40px;
+    width: 14px; height: 14px; opacity: 0;
+    background: var(--rosa);
+    transform: rotate(45deg);
+    animation: puja linear infinite;
+  }
+  .cel span::before, .cel span::after {
+    content: ""; position: absolute; width: 14px; height: 14px; border-radius: 50%; background: inherit;
+  }
+  .cel span::before { left: -7px; }
+  .cel span::after  { top: -7px; }
+  @keyframes puja {
+    0%   { transform: translateY(0) rotate(45deg) scale(.6); opacity: 0; }
+    10%  { opacity: .35; }
+    90%  { opacity: .2; }
+    100% { transform: translateY(-110vh) rotate(45deg) scale(1); opacity: 0; }
+  }
+
+  /* ---------- pantalles ---------- */
+  .pantalla {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 24px;
+    opacity: 0; visibility: hidden;
+    transform: scale(.97);
+    transition: opacity 1.1s ease, transform 1.1s ease, visibility 0s 1.1s;
+  }
+  .pantalla.activa {
+    opacity: 1; visibility: visible; transform: scale(1);
+    transition: opacity 1.1s ease .2s, transform 1.1s ease .2s, visibility 0s;
+  }
+
+  /* ---------- 1. el sobre ---------- */
+  .sobre-wrap { position: relative; cursor: pointer; }
+  .sobre {
+    position: relative; width: min(78vw, 360px); aspect-ratio: 3 / 2;
+    background: var(--paper-dark);
+    border-radius: 6px;
+    box-shadow: 0 30px 60px rgba(0,0,0,.45);
+    perspective: 900px;
+    animation: flota 5s ease-in-out infinite;
+  }
+  @keyframes flota { 50% { transform: translateY(-8px); } }
+  .sobre .cos {
+    position: absolute; inset: 0; border-radius: 6px; overflow: hidden;
+    background: var(--paper);
+    background-image: linear-gradient(to bottom, var(--paper-dark), var(--paper)); /* fons intern */
+  }
+  /* les dues solapes laterals i la inferior */
+  .sobre .cos::before {
+    content: ""; position: absolute; inset: 0;
+    background:
+      linear-gradient(to bottom right, transparent 49.5%, var(--paper) 50%) 0 0 / 50% 100% no-repeat,
+      linear-gradient(to bottom left,  transparent 49.5%, var(--paper) 50%) 100% 0 / 50% 100% no-repeat;
+    z-index: 2;
+  }
+  .sobre .cos::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to top, var(--paper-dark) 0, var(--paper-dark) 100%);
+    clip-path: polygon(0 100%, 50% 45%, 100% 100%);
+    z-index: 3;
+    box-shadow: 0 -4px 10px rgba(0,0,0,.08);
+  }
+  .sobre .carta {
+    position: absolute; left: 8%; right: 8%; top: 12%; bottom: 8%;
+    background: #fff9f0; border-radius: 3px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    z-index: 1;
+    transition: transform 1s cubic-bezier(.4,0,.2,1) .5s;
+  }
+  .sobre .solapa {
+    position: absolute; left: 0; right: 0; top: 0; height: 56%;
+    background: var(--paper-dark);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top;
+    transform: rotateX(0);
+    transition: transform 1s cubic-bezier(.4,0,.2,1);
+    z-index: 5;
+  }
+  .sobre .solapa::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,.05), transparent 40%);
+  }
+  .sobre.obert .solapa { transform: rotateX(180deg); z-index: 0; }
+  .sobre.obert .carta { transform: translateY(-38%); }
+
+  /* segell de cera en forma de cor */
+  .segell {
+    position: absolute; left: 50%; top: 56%;
+    width: 58px; height: 58px;
+    transform: translate(-50%, -50%);
+    z-index: 6;
+    transition: transform .6s ease, opacity .4s ease;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,.35));
+  }
+  .segell svg { width: 100%; height: 100%; }
+  .sobre.obert .segell { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  .sobre-wrap:hover .segell { transform: translate(-50%, -50%) scale(1.08); }
+
+  /* etiqueta "obre'm" */
+  .obrem {
+    position: absolute; left: 50%; top: -58px;
+    transform: translate(-50%, 12px);
+    font-family: 'Homemade Apple', cursive;
+    font-size: 1.35rem; color: var(--rosa);
+    white-space: nowrap;
+    opacity: 0; pointer-events: none;
+    transition: opacity .5s ease, transform .5s ease;
+  }
+  .obrem::after {
+    content: ""; display: block; margin: 6px auto 0;
+    width: 0; height: 0;
+    border-left: 6px solid transparent; border-right: 6px solid transparent;
+    border-top: 8px solid var(--rosa);
+  }
+  .sobre-wrap:hover .obrem, .sobre-wrap.pista .obrem {
+    opacity: 1; transform: translate(-50%, -10px);
+  }
+  .sobre.obert ~ .obrem { opacity: 0 !important; }
+
+  /* ---------- 2-4. fotos ---------- */
+  .polaroid {
+    background: #fff9f0; padding: 14px 14px 18px;
+    box-shadow: 0 25px 50px rgba(0,0,0,.45);
+    transform: rotate(var(--gir, -2deg)) translateY(30px);
+    opacity: 0;
+    transition: opacity 1.2s ease .6s, transform 1.2s ease .6s;
+    width: min(70vw, 340px);
+  }
+  .activa .polaroid { opacity: 1; transform: rotate(var(--gir, -2deg)) translateY(0); }
+  .polaroid img, .polaroid .buit {
+    display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover;
+    background: var(--paper-dark);
+  }
+  .polaroid .buit {
+    display: none; place-items: center; color: var(--tinta);
+    font-style: italic; text-align: center; padding: 20px;
+  }
+  .polaroid.sense img { display: none; }
+  .polaroid.sense .buit { display: grid; }
+
+  .text {
+    margin-top: 36px;
+    max-width: 30ch;
+    text-align: center;
+    font-size: clamp(1.45rem, 4.5vw, 2rem);
+    font-style: italic; font-weight: 400;
+    line-height: 1.35;
+    color: var(--paper);
+  }
+  .text .p {
+    display: inline-block; opacity: 0; transform: translateY(6px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .activa .text .p { opacity: 1; transform: none; }
+
+  /* fletxa */
+  .fletxa {
+    position: fixed; right: 28px; bottom: 28px;
+    width: 56px; height: 56px; border-radius: 50%;
+    border: 1px solid rgba(230,184,196,.5);
+    background: rgba(255,255,255,.04);
+    color: var(--rosa); cursor: pointer;
+    display: grid; place-items: center;
+    opacity: 0; transform: translateX(10px);
+    transition: opacity .8s ease 2.6s, transform .8s ease 2.6s, background .3s;
+    pointer-events: none;
+  }
+  .activa .fletxa { opacity: 1; transform: none; pointer-events: auto; }
+  .fletxa:hover, .fletxa:focus-visible { background: rgba(230,184,196,.15); outline: none; }
+  .fletxa svg { width: 22px; height: 22px; }
+
+  /* cor final */
+  .cor-final {
+    margin-top: 28px; width: 46px; height: 46px; color: var(--cera);
+    opacity: 0; transform: scale(.5);
+    transition: opacity .8s ease 3s, transform .8s ease 3s;
+  }
+  .activa .cor-final { opacity: 1; transform: scale(1); animation: batec 1.4s ease-in-out 3.8s infinite; }
+  @keyframes batec {
+    0%, 100% { transform: scale(1); }
+    14% { transform: scale(1.18); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.12); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cel" id="cel"></div>
+
+<!-- 1. SOBRE -->
+<section class="pantalla activa" id="p1">
+  <div class="sobre-wrap" id="sobreWrap">
+    <div class="sobre" id="sobre">
+      <div class="cos"><div class="carta"></div></div>
+      <div class="solapa"></div>
+      <div class="segell">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <circle cx="32" cy="32" r="30" fill="#b0233a"/>
+          <circle cx="32" cy="32" r="30" fill="url(#g)"/>
+          <circle cx="32" cy="32" r="24" fill="none" stroke="#7d1527" stroke-width="1.2" opacity=".6"/>
+          <path d="M32 46 C22 38 16 32 16 25 a8 8 0 0 1 16 -2 a8 8 0 0 1 16 2 c0 7 -6 13 -16 21z" fill="#7d1527"/>
+          <defs><radialGradient id="g" cx=".35" cy=".3" r=".8">
+            <stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#000" stop-opacity=".25"/>
+          </radialGradient></defs>
+        </svg>
+      </div>
+    </div>
+    <div class="obrem">obre'm</div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="pantalla" id="p2">
+  <figure class="polaroid" style="--gir:-2.5deg">
+    <img src="foto1.jpg" alt="Nosaltres" onerror="this.parentElement.classList.add('sense')">
+    <div class="buit">Posa aquí la foto<br>(foto1.jpg)</div>
+  </figure>
+  <p class="text">ens vam conèixer un 6 de gener, quin regal de Reis em va caure del cel</p>
+  <button class="fletxa" data-seguent="p3" aria-label="Següent">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </button>
+</section>
+
+<!-- 3 -->
+<section class="pantalla" id="p3">
+  <figure class="polaroid" style="--gir:2deg">
+    <img src="foto2.jpg" alt="Nosaltres" onerror="this.parentElement.classList.add('sense')">
+    <div class="buit">Posa aquí la foto<br>(foto2.jpg)</div>
+  </figure>
+  <p class="text">hem passat ja moltes coses junts, i les que queden...</p>
+  <button class="fletxa" data-seguent="p4" aria-label="Següent">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </button>
+</section>
+
+<!-- 4 -->
+<section class="pantalla" id="p4">
+  <figure class="polaroid" style="--gir:-1.5deg">
+    <img src="foto3.jpg" alt="Nosaltres" onerror="this.parentElement.classList.add('sense')">
+    <div class="buit">Posa aquí la foto<br>(foto3.jpg)</div>
+  </figure>
+  <p class="text">T'estimo Amanda i espero que poguem disfrutar encara de mil coses junts</p>
+  <svg class="cor-final" viewBox="0 0 24 24" aria-hidden="true">
+    <path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.3 3 4.5 6.8 4.5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.8 0 5.9 3.8 4.4 7.3C19.5 16.4 12 21 12 21z"/>
+  </svg>
+</section>
+
+<script>
+  // cors flotants de fons
+  const cel = document.getElementById('cel');
+  for (let i = 0; i < 18; i++) {
+    const s = document.createElement('span');
+    s.style.left = Math.random() * 100 + '%';
+    s.style.animationDuration = 14 + Math.random() * 14 + 's';
+    s.style.animationDelay = -Math.random() * 28 + 's';
+    s.style.transform += ` scale(${.5 + Math.random()})`;
+    cel.appendChild(s);
+  }
+
+  // text que apareix paraula a paraula
+  document.querySelectorAll('.text').forEach(t => {
+    const paraules = t.textContent.trim().split(' ');
+    t.innerHTML = paraules.map((p, i) =>
+      `<span class="p" style="transition-delay:${1.4 + i * .12}s">${p}</span>`).join(' ');
+  });
+
+  // canvi de pantalla
+  function mostra(id) {
+    document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
+    document.getElementById(id).classList.add('activa');
+  }
+  document.querySelectorAll('.fletxa').forEach(b =>
+    b.addEventListener('click', () => mostra(b.dataset.seguent)));
+
+  // sobre
+  const sobreWrap = document.getElementById('sobreWrap');
+  const sobre = document.getElementById('sobre');
+  let obert = false;
+  sobreWrap.addEventListener('click', () => {
+    if (obert) return;
+    obert = true;
+    sobre.classList.add('obert');
+    sobreWrap.classList.remove('pista');
+    setTimeout(() => mostra('p2'), 1700);
+  });
+  // al mòbil no hi ha hover: ensenya "obre'm" al cap d'uns segons
+  if (!window.matchMedia('(hover: hover)').matches) {
+    setTimeout(() => sobreWrap.classList.add('pista'), 2500);
+  }
+</script>
+</body>
+</html>
